@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Feed Admin — Sunil Kumar Singh</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --navy:#0d1b2a; --teal:#2ab7b7; --gold:#e8b04a;
+      --white:#fff; --off:#f4f7fa; --border:#dde3ed;
+      --text:#1a202c; --muted:#6b7a99;
+      --green:#22c55e; --red:#ef4444; --orange:#f97316;
+    }
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+    body { font-family:'IBM Plex Sans',sans-serif; background:var(--off); color:var(--text); min-height:100vh; }
+
+    header { background:var(--navy); padding:1rem 2rem; display:flex; align-items:center; justify-content:space-between; }
+    .logo { color:var(--teal); font-family:'IBM Plex Mono',monospace; font-size:0.85rem; font-weight:600; letter-spacing:.08em; }
+    .logo span { color:rgba(255,255,255,.4); }
+
+    main { max-width:760px; margin:0 auto; padding:2.5rem 1.5rem; }
+    h1 { font-size:1.35rem; font-weight:700; margin-bottom:.25rem; }
+    .sub { font-size:.85rem; color:var(--muted); margin-bottom:2rem; line-height:1.5; }
+
+    .panel { background:var(--white); border:1px solid var(--border); border-radius:12px; padding:1.75rem; margin-bottom:1.5rem; }
+    .panel h2 { font-size:.95rem; font-weight:700; margin-bottom:.25rem; }
+    .panel p { font-size:.8rem; color:var(--muted); margin-bottom:1.25rem; line-height:1.5; }
+
+    .field { margin-bottom:1.2rem; }
+    .field label { display:block; font-size:.78rem; font-weight:600; margin-bottom:.35rem; }
+    .field .hint { font-size:.7rem; color:var(--muted); margin-bottom:.35rem; }
+    textarea {
+      width:100%; padding:.65rem .85rem; border:1.5px solid var(--border); border-radius:7px;
+      font-family:'IBM Plex Sans',sans-serif; font-size:.84rem; color:var(--text);
+      resize:vertical; min-height:72px; line-height:1.55; outline:none; transition:border-color .15s;
+    }
+    textarea:focus { border-color:var(--teal); }
+    .chars { font-size:.68rem; color:var(--muted); text-align:right; margin-top:.2rem; font-family:'IBM Plex Mono',monospace; }
+    .chars.warn { color:var(--orange); }
+    .chars.over { color:var(--red); }
+
+    .row { display:flex; gap:.75rem; flex-wrap:wrap; align-items:center; margin-top:1.5rem; padding-top:1.25rem; border-top:1px solid var(--border); }
+    .spacer { flex:1; }
+
+    .btn {
+      display:inline-flex; align-items:center; gap:.4rem;
+      padding:.6rem 1.2rem; border-radius:7px; font-size:.83rem;
+      font-weight:600; font-family:'IBM Plex Sans',sans-serif;
+      cursor:pointer; border:none; transition:opacity .15s, transform .15s;
+    }
+    .btn:hover { opacity:.87; transform:translateY(-1px); }
+    .btn:disabled { opacity:.4; cursor:not-allowed; transform:none; }
+    .btn-primary { background:var(--teal); color:#fff; }
+    .btn-green  { background:var(--green); color:#fff; }
+    .btn-outline { background:transparent; color:var(--text); border:1.5px solid var(--border); }
+
+    /* Preview */
+    .preview { background:#0d1b2a; border-radius:10px; padding:1.2rem 1.4rem; margin-top:1.25rem; border:1px solid rgba(255,255,255,.08); display:none; }
+    .preview-hdr { color:var(--teal); font-size:.62rem; font-weight:700; letter-spacing:.15em; text-transform:uppercase; margin-bottom:.8rem; font-family:'IBM Plex Mono',monospace; }
+    .pi { margin-bottom:.85rem; }
+    .pi:last-child { margin-bottom:0; }
+    .pi-cat { font-size:.58rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase; margin-bottom:.2rem; }
+    .pi-cat.fc { color:#e8b04a; }
+    .pi-cat.ai { color:#2ab7b7; }
+    .pi-text { font-size:.76rem; color:rgba(255,255,255,.82); line-height:1.55; }
+
+    /* Output box */
+    .output-wrap { display:none; }
+    .output-label { font-size:.78rem; font-weight:600; margin-bottom:.5rem; }
+    .output-box {
+      font-family:'IBM Plex Mono',monospace; font-size:.78rem;
+      background:#1a2e45; color:#a8d8d8; padding:1rem;
+      border-radius:8px; white-space:pre-wrap; word-break:break-all;
+      border:1px solid rgba(42,183,183,.2); line-height:1.6;
+    }
+    .output-steps { margin-top:1rem; }
+    .output-steps li { font-size:.82rem; color:var(--text); margin-bottom:.45rem; line-height:1.5; padding-left:.25rem; }
+    .output-steps li strong { color:var(--navy); }
+    .output-steps li code { font-family:'IBM Plex Mono',monospace; background:var(--off); padding:.1rem .35rem; border-radius:4px; font-size:.78rem; }
+
+    .dl-btn {
+      display:inline-flex; align-items:center; gap:.4rem;
+      margin-top:.85rem; padding:.55rem 1.1rem;
+      background:var(--teal); color:#fff; border:none; border-radius:7px;
+      font-size:.82rem; font-weight:600; cursor:pointer;
+      font-family:'IBM Plex Sans',sans-serif;
+    }
+    .dl-btn:hover { opacity:.87; }
+
+    .spinner { display:inline-block; animation:spin .7s linear infinite; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+
+    .toast {
+      position:fixed; bottom:1.75rem; left:50%; transform:translateX(-50%);
+      background:var(--navy); color:#fff; padding:.7rem 1.4rem;
+      border-radius:8px; font-size:.82rem; font-weight:500;
+      opacity:0; pointer-events:none; transition:opacity .25s; white-space:nowrap; z-index:999;
+    }
+    .toast.show { opacity:1; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">SKS Portfolio <span>/</span> Feed Admin</div>
+</header>
+
+<main>
+  <h1>Today's Feed Highlights</h1>
+  <p class="sub" id="dateLabel">Loading date…<br>
+  Workflow: <strong>1)</strong> Click AI Draft &nbsp;→&nbsp; <strong>2)</strong> Edit if needed &nbsp;→&nbsp; <strong>3)</strong> Download <code>highlights.json</code> &nbsp;→&nbsp; <strong>4)</strong> Upload to your Netlify site alongside <code>index.html</code>.</p>
+
+  <div class="panel">
+    <h2>Draft Highlights</h2>
+    <p>Click <strong>AI Draft</strong> to generate both highlights instantly. Edit the text freely — the preview updates live.</p>
+
+    <div class="field">
+      <label>💰 Financial Crime Highlight</label>
+      <div class="hint">Enforcement, new typology, or regulatory action — 2 sentences max</div>
+      <textarea id="fcText" placeholder="e.g. The FCA issued a £38m fine to a mid-tier bank for systemic AML control failures…" oninput="sync('fc')"></textarea>
+      <div class="chars" id="fcChars">0 / 170</div>
+    </div>
+
+    <div class="field">
+      <label>🤖 AI in Financial Crime Highlight</label>
+      <div class="hint">AI adoption in compliance, or AI misuse by bad actors — 2 sentences max</div>
+      <textarea id="aiText" placeholder="e.g. FATF's latest report flags AI-generated synthetic identities as an emerging…" oninput="sync('ai')"></textarea>
+      <div class="chars" id="aiChars">0 / 170</div>
+    </div>
+
+    <div class="preview" id="preview">
+      <div class="preview-hdr">📡 Preview — as it appears in the ticker</div>
+      <div id="previewItems"></div>
+    </div>
+
+    <div class="row">
+      <button class="btn btn-outline" id="draftBtn" onclick="aiDraft()">✨ AI Draft</button>
+      <button class="btn btn-outline" onclick="clearAll()">✕ Clear</button>
+      <div class="spacer"></div>
+      <button class="btn btn-green" id="genBtn" onclick="generate()" disabled>⬇ Generate highlights.json</button>
+    </div>
+  </div>
+
+  <!-- Output -->
+  <div class="panel output-wrap" id="outputWrap">
+    <h2>Your highlights.json</h2>
+    <div class="output-label">Copy this content or download the file:</div>
+    <div class="output-box" id="outputBox"></div>
+    <button class="dl-btn" id="dlBtn">⬇ Download highlights.json</button>
+
+    <div class="output-steps">
+      <p style="font-size:.82rem;font-weight:600;margin-bottom:.6rem;margin-top:1.25rem;">How to publish:</p>
+      <ol class="output-steps">
+        <li><strong>Download</strong> <code>highlights.json</code> using the button above.</li>
+        <li>Go to your <strong>Netlify dashboard</strong> → your site → <strong>Deploys</strong>.</li>
+        <li><strong>Drag a folder</strong> containing <code>index.html</code>, <code>insights.html</code>, and the new <code>highlights.json</code> into the deploy drop zone.</li>
+        <li>Done — the ticker will show your highlights immediately.</li>
+      </ol>
+    </div>
+  </div>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  document.getElementById('dateLabel').innerHTML =
+    '<strong>' + new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'}) + '</strong><br>' +
+    'Workflow: <strong>1)</strong> Click AI Draft &nbsp;→&nbsp; <strong>2)</strong> Edit if needed &nbsp;→&nbsp; <strong>3)</strong> Download <code>highlights.json</code> &nbsp;→&nbsp; <strong>4)</strong> Upload to Netlify alongside your other files.';
+
+  function toast(msg,dur){
+    dur = dur||2800;
+    var el = document.getElementById('toast');
+    el.textContent = msg;
+    el.classList.add('show');
+    setTimeout(function(){ el.classList.remove('show'); }, dur);
+  }
+
+  function sync(type){
+    var id = type==='fc' ? 'fcText' : 'aiText';
+    var cid = type==='fc' ? 'fcChars' : 'aiChars';
+    var len = document.getElementById(id).value.length;
+    var el = document.getElementById(cid);
+    el.textContent = len+' / 170';
+    el.className = 'chars'+(len>190?' over':len>170?' warn':'');
+    updateGenBtn();
+    updatePreview();
+  }
+
+  function updateGenBtn(){
+    var fc = document.getElementById('fcText').value.trim();
+    var ai = document.getElementById('aiText').value.trim();
+    document.getElementById('genBtn').disabled = !(fc && ai);
+  }
+
+  function updatePreview(){
+    var fc = document.getElementById('fcText').value.trim();
+    var ai = document.getElementById('aiText').value.trim();
+    var box = document.getElementById('preview');
+    var items = document.getElementById('previewItems');
+    if(!fc && !ai){ box.style.display='none'; return; }
+    box.style.display='block';
+    items.innerHTML =
+      (fc ? '<div class="pi"><div class="pi-cat fc">💰 Financial Crime</div><div class="pi-text">'+fc+'</div></div>' : '') +
+      (ai ? '<div class="pi"><div class="pi-cat ai">🤖 AI in Fin Crime</div><div class="pi-text">'+ai+'</div></div>' : '');
+  }
+
+  async function aiDraft(){
+    var btn = document.getElementById('draftBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner">↻</span> Drafting…';
+    var today = new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+    var prompt = 'You are a financial crime intelligence briefing assistant. Today is '+today+'.\nGenerate exactly 2 concise briefing highlights:\n1. One on financial crime — a specific enforcement action, notable typology, or regulatory development from 2024–2025\n2. One on AI in financial crime — either AI adoption by compliance/FIU teams OR AI being misused by bad actors\n\nReturn ONLY valid JSON, no markdown, no preamble:\n[\n  {"type":"fc","text":"2-sentence financial crime highlight, specific and sharp, under 170 characters"},\n  {"type":"ai","text":"2-sentence AI in financial crime highlight, under 170 characters"}\n]\n\nMake them sound like real industry briefing bullets — professional, specific, with concrete details where plausible.';
+    try {
+      var res = await fetch('https://api.anthropic.com/v1/messages',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:400,messages:[{role:'user',content:prompt}]})
+      });
+      var data = await res.json();
+      var raw = data.content.map(function(i){ return i.text||''; }).join('');
+      var items = JSON.parse(raw.replace(/```json|```/g,'').trim());
+      document.getElementById('fcText').value = items[0].text;
+      document.getElementById('aiText').value = items[1].text;
+      sync('fc'); sync('ai');
+      toast('✨ Draft ready — review and edit, then generate the file');
+    } catch(e){
+      toast('⚠ Draft failed — check your connection and retry');
+    }
+    btn.disabled = false;
+    btn.innerHTML = '✨ AI Draft';
+  }
+
+  function generate(){
+    var fc = document.getElementById('fcText').value.trim();
+    var ai = document.getElementById('aiText').value.trim();
+    if(!fc||!ai){ toast('Fill both fields first'); return; }
+    var payload = {
+      date: new Date().toISOString().slice(0,10),
+      items: [{type:'fc',text:fc},{type:'ai',text:ai}]
+    };
+    var json = JSON.stringify(payload, null, 2);
+    document.getElementById('outputBox').textContent = json;
+    document.getElementById('outputWrap').style.display = 'block';
+    document.getElementById('outputWrap').scrollIntoView({behavior:'smooth',block:'start'});
+
+    // Wire up download button
+    var blob = new Blob([json], {type:'application/json'});
+    var url  = URL.createObjectURL(blob);
+    var dl   = document.getElementById('dlBtn');
+    dl.onclick = function(){
+      var a = document.createElement('a');
+      a.href = url; a.download = 'highlights.json';
+      a.click();
+    };
+    toast('✅ Ready — download highlights.json and deploy to Netlify');
+  }
+
+  function clearAll(){
+    document.getElementById('fcText').value='';
+    document.getElementById('aiText').value='';
+    sync('fc'); sync('ai');
+    document.getElementById('preview').style.display='none';
+    document.getElementById('outputWrap').style.display='none';
+  }
+</script>
+</body>
+</html>

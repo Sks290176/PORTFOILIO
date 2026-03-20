@@ -1,0 +1,13 @@
+{
+  "date": "2025-03-20",
+  "items": [
+    {
+      "type": "fc",
+      "text": "The FCA fined a major UK bank £45m for systemic AML failures linked to a complex layering scheme involving shell companies across three jurisdictions. The enforcement signals tightening supervisory expectations around beneficial ownership verification."
+    },
+    {
+      "type": "ai",
+      "text": "FATF's latest typologies report flags AI-generated synthetic identities as an emerging vector for onboarding fraud at digital banks and crypto exchanges. Firms are urged to implement behavioural biometrics alongside document verification to counter this threat."
+    }
+  ]
+}

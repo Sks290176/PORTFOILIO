@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Financial Crime Insights — Sunil Kumar Singh</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --navy: #0d1b2a;
+      --navy-mid: #1a2e45;
+      --steel: #2e6da4;
+      --teal: #2ab7b7;
+      --gold: #c9933a;
+      --white: #ffffff;
+      --off-white: #f7f9fc;
+      --light-grey: #eef1f5;
+      --mid-grey: #9aaabb;
+      --dark-grey: #4a5568;
+      --text: #1a202c;
+      --text-light: #4a5568;
+      --border: #e2e8f0;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; color: var(--text); background: var(--off-white); }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: var(--navy);
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 0 3rem; height: 60px;
+    }
+    .nav-logo { color: var(--white); font-weight: 700; font-size: 1rem; }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a { color: rgba(255,255,255,0.75); text-decoration: none; font-size: 0.85rem; font-weight: 500; transition: color 0.2s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--teal); }
+
+    /* HERO */
+    .page-hero {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 100%);
+      padding: 100px 3rem 3.5rem;
+      text-align: center;
+    }
+    .page-hero-tag { color: var(--teal); font-size: 0.75rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 0.8rem; }
+    .page-hero-title { font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; color: var(--white); margin-bottom: 0.8rem; }
+    .page-hero-desc { color: rgba(255,255,255,0.65); font-size: 0.95rem; max-width: 600px; margin: 0 auto; line-height: 1.7; }
+
+    /* TABS */
+    .tabs-wrapper {
+      max-width: 1100px; margin: 0 auto;
+      padding: 3rem 2rem;
+    }
+
+    .tabs-nav {
+      display: flex; flex-wrap: wrap; gap: 0.5rem;
+      margin-bottom: 2rem;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 0;
+    }
+
+    .tab-btn {
+      padding: 0.6rem 1.2rem;
+      font-size: 0.82rem; font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      border: none; background: none; cursor: pointer;
+      color: var(--text-light);
+      border-bottom: 3px solid transparent;
+      margin-bottom: -2px;
+      transition: color 0.2s, border-color 0.2s;
+      display: flex; align-items: center; gap: 0.4rem;
+    }
+    .tab-btn:hover { color: var(--teal); }
+    .tab-btn.active { color: var(--teal); border-bottom-color: var(--teal); }
+
+    /* TAB CONTENT */
+    .tab-content { display: none; }
+    .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+    .typology-header {
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: 12px; padding: 2rem 2.5rem;
+      margin-bottom: 1.5rem;
+      display: flex; align-items: flex-start; gap: 1.5rem;
+    }
+    .typology-icon {
+      width: 56px; height: 56px; flex-shrink: 0;
+      background: rgba(42,183,183,0.1); border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.6rem;
+    }
+    .typology-title { font-size: 1.4rem; font-weight: 800; color: var(--text); margin-bottom: 0.4rem; }
+    .typology-subtitle { font-size: 0.85rem; color: var(--teal); font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.8rem; }
+    .typology-overview { font-size: 0.92rem; color: var(--text-light); line-height: 1.8; }
+
+    .cards-row {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 1.5rem; margin-bottom: 1.5rem;
+    }
+
+    .info-card {
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: 12px; padding: 1.8rem;
+    }
+    .info-card-header {
+      display: flex; align-items: center; gap: 0.7rem;
+      margin-bottom: 1.2rem;
+    }
+    .info-card-icon {
+      width: 36px; height: 36px;
+      border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1rem;
+    }
+    .icon-red { background: rgba(220,53,69,0.1); }
+    .icon-blue { background: rgba(46,109,164,0.1); }
+    .icon-green { background: rgba(42,183,183,0.1); }
+
+    .info-card-title { font-size: 0.95rem; font-weight: 700; color: var(--text); }
+
+    .red-flags-list, .trends-list { list-style: none; padding: 0; }
+    .red-flags-list li, .trends-list li {
+      font-size: 0.875rem; color: var(--text-light);
+      padding: 0.5rem 0 0.5rem 1.3rem; position: relative;
+      border-bottom: 1px solid var(--light-grey); line-height: 1.6;
+    }
+    .red-flags-list li:last-child, .trends-list li:last-child { border-bottom: none; }
+    .red-flags-list li::before { content: '⚠'; position: absolute; left: 0; font-size: 0.65rem; top: 0.6rem; }
+    .trends-list li::before { content: '↗'; position: absolute; left: 0; color: var(--teal); font-size: 0.8rem; top: 0.55rem; }
+
+
+
+    /* DROPDOWN */
+    .dropdown-wrapper { margin-top: 1rem; }
+    .dropdown-toggle {
+      width: 100%; background: var(--navy);
+      border: none; border-radius: 8px;
+      padding: 0.8rem 1.2rem;
+      display: flex; justify-content: space-between; align-items: center;
+      cursor: pointer; transition: background 0.2s;
+      font-family: 'Inter', sans-serif;
+    }
+    .dropdown-toggle:hover { background: #1a2e45; }
+    .dropdown-toggle-label {
+      font-size: 0.88rem; font-weight: 700;
+      color: var(--teal); display: flex; align-items: center; gap: 0.5rem;
+    }
+    .dropdown-arrow {
+      color: var(--teal); font-size: 0.8rem;
+      transition: transform 0.3s;
+    }
+    .dropdown-arrow.open { transform: rotate(180deg); }
+    .dropdown-content {
+      display: none;
+      background: var(--off-white);
+      border: 1px solid #e2e8f0;
+      border-top: none;
+      border-radius: 0 0 8px 8px;
+      padding: 1.2rem 1.5rem;
+    }
+    .dropdown-content.open { display: block; animation: fadeIn 0.2s ease; }
+    .dropdown-desc {
+      font-size: 0.85rem; color: var(--text-light);
+      line-height: 1.6; margin-bottom: 1rem;
+    }
+    .pdf-preview {
+      width: 100%; height: 500px;
+      border: 1px solid #e2e8f0; border-radius: 6px;
+      margin-bottom: 1rem;
+    }
+    .btn-download {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: var(--navy); color: white;
+      padding: 0.6rem 1.2rem; border-radius: 6px;
+      font-size: 0.82rem; font-weight: 600;
+      text-decoration: none; transition: background 0.2s;
+      font-family: 'Inter', sans-serif;
+    }
+    .btn-download:hover { background: #1a2e45; }
+
+    /* ACTION BUTTONS */
+    .action-bar {
+      display: flex; gap: 1rem; flex-wrap: wrap;
+      margin-top: 1.5rem;
+    }
+    .action-btn {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.65rem 1.3rem; border-radius: 8px;
+      font-size: 0.82rem; font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer; text-decoration: none;
+      transition: all 0.2s;
+    }
+    .btn-handout {
+      background: rgba(46,109,164,0.08);
+      border: 1px solid rgba(46,109,164,0.3);
+      color: var(--steel);
+    }
+    .btn-handout:hover { background: rgba(46,109,164,0.15); }
+    .btn-video {
+      background: rgba(42,183,183,0.08);
+      border: 1px solid rgba(42,183,183,0.3);
+      color: var(--teal);
+    }
+    .btn-video:hover { background: rgba(42,183,183,0.15); }
+    .btn-coming {
+      background: var(--light-grey);
+      border: 1px dashed #cbd5e0;
+      color: var(--mid-grey);
+      cursor: not-allowed;
+    }
+    .coming-tag {
+      font-size: 0.65rem; background: var(--light-grey);
+      color: var(--mid-grey); padding: 0.1rem 0.4rem;
+      border-radius: 4px; font-weight: 500;
+    }
+
+    /* EDIT NOTE */
+    .edit-note {
+      background: rgba(201,147,58,0.08); border: 1px dashed var(--gold);
+      border-radius: 8px; padding: 0.8rem 1.2rem;
+      font-size: 0.78rem; color: var(--gold); margin-bottom: 1.5rem;
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+
+    /* FOOTER */
+    footer { background: var(--navy); color: rgba(255,255,255,0.5); text-align: center; padding: 1.8rem; font-size: 0.8rem; margin-top: 2rem; }
+    footer span { color: var(--teal); }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      nav { padding: 0 1.5rem; }
+      .nav-links { display: none; }
+      .tabs-wrapper { padding: 2rem 1rem; }
+      .cards-row { grid-template-columns: 1fr; }
+      .typology-header { flex-direction: column; }
+      .page-hero { padding: 90px 1.5rem 2.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Sunil Kumar Singh</div>
+  <ul class="nav-links">
+    <li><a href="index.html">← Portfolio</a></li>
+    <li><a href="insights.html" class="active">FC Insights</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<div class="page-hero">
+  <p class="page-hero-tag">Subject Matter Expert</p>
+  <h1 class="page-hero-title">Financial Crime Insights</h1>
+  <p class="page-hero-desc">A practitioner's guide to financial crime typologies — overviews, key red flags, and the latest trends shaping the industry. Updated regularly.</p>
+</div>
+
+<!-- TABS -->
+<div class="tabs-wrapper">
+
+  <div class="edit-note">
+    ✏️ <strong>To update this page:</strong> Open insights.html in a text editor, find the typology you want to edit, and update the content directly. Re-deploy to Netlify when done.
+  </div>
+
+  <!-- TAB NAV -->
+  <div class="tabs-nav">
+    <button class="tab-btn active" onclick="showTab('aml')">💰 Money Laundering</button>
+    <button class="tab-btn" onclick="showTab('sanctions')">🚫 Sanctions Evasion</button>
+    <button class="tab-btn" onclick="showTab('market')">📈 Market Abuse</button>
+    <button class="tab-btn" onclick="showTab('fraud')">🕵️ Fraud</button>
+    <button class="tab-btn" onclick="showTab('insider')">🏢 Insider Threat</button>
+    <button class="tab-btn" onclick="showTab('bribery')">🤝 Bribery & Corruption</button>
+    <button class="tab-btn" onclick="showTab('whistle')">🔔 Whistleblowing</button>
+  </div>
+
+  <!-- AML -->
+  <div class="tab-content active" id="tab-aml">
+    <div class="typology-header">
+      <div class="typology-icon">💰</div>
+      <div>
+        <div class="typology-title">Money Laundering (AML)</div>
+        <div class="typology-subtitle">Anti-Money Laundering</div>
+        <div class="typology-overview">Money laundering is the process of concealing the origins of illegally obtained money, typically by passing it through a complex sequence of banking transfers or commercial transactions. The Financial Action Task Force (FATF) estimates that 2–5% of global GDP is laundered annually. AML frameworks require financial institutions to detect, prevent, and report suspicious activity across three stages: placement, layering, and integration.</div>
+      </div>
+    </div>
+    <div class="cards-row">
+      <div class="info-card">
+        <div class="info-card-header"><div class="info-card-icon icon-red">⚠️</div><div class="info-card-title">Key Red Flags</div></div>
+        <ul class="red-flags-list">
+          <li>Unusual transaction volumes inconsistent with customer profile</li>
+          <li>Frequent cash deposits just below reporting thresholds (structuring)</li>
+          <li>Complex layering through multiple jurisdictions with no clear business purpose</li>
+          <li>Use of shell companies or nominees to obscure beneficial ownership</li>
+          <li>Rapid movement of funds between unrelated accounts</li>
+          <li>Customers reluctant to provide KYC documentation</li>
+          <li>Transactions involving high-risk jurisdictions on FATF grey/black lists</li>
+        </ul>
+      </div>
+      <div class="info-card">
+        <div class="info-card-header"><div class="info-card-icon icon-blue">↗️</div><div class="info-card-title">Latest Trends (2024–2025)</div></div>
+        <ul class="trends-list">
+          <li>Rise of cryptocurrency and DeFi platforms as laundering vehicles</li>
+          <li>Increased use of trade-based money laundering (TBML) through over/under-invoicing</li>
+          <li>AI-powered transaction monitoring replacing rule-based systems</li>
+          <li>Growth of professional money laundering networks (PMLNs) operating across borders</li>
+          <li>Regulatory focus on beneficial ownership registries and transparency</li>
+          <li>FATF mutual evaluations driving stronger correspondent banking controls</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="action-bar">
+      <a href="#" class="action-btn btn-coming" onclick="return false;">
+        🎬 Watch Video <span class="coming-tag">Coming Soon</span>
+      </a>
+    </div>
+
+    <!-- PIG BUTCHERING DROPDOWN -->
+    <div class="dropdown-wrapper">
+      <button class="dropdown-toggle" onclick="toggleDropdown('pig-butchering')">
+        <span class="dropdown-toggle-label">📄 Pig Butchering Scam — Handout</span>
+        <span class="dropdown-arrow" id="arrow-pig-butchering">▼</span>
+      </button>
+      <div class="dropdown-content" id="dropdown-pig-butchering">
+        <p class="dropdown-desc">
+          A comprehensive one-page infographic on the Pig Butchering (Sha Zhu Pan) scam — 
+          covering what it is, signs of the scam, the 5 phases, scale of the problem, 
+          and what to do. Suitable for investigators, compliance teams, and public awareness.
+        </p>
+        <iframe class="pdf-preview" 
+          src="data:application/pdf;base64,JVBERi0xLjQKJZOMi54gUmVwb3J0TGFiIEdlbmVyYXRlZCBQREYgZG9jdW1lbnQgKG9wZW5zb3VyY2UpCjEgMCBvYmoKPDwKL0YxIDIgMCBSIC9GMiAzIDAgUiAvRjMgNCAwIFIgL0Y0IDUgMCBSCj4+CmVuZG9iagoyIDAgb2JqCjw8Ci9CYXNlRm9udCAvSGVsdmV0aWNhIC9FbmNvZGluZyAvV2luQW5zaUVuY29kaW5nIC9OYW1lIC9GMSAvU3VidHlwZSAvVHlwZTEgL1R5cGUgL0ZvbnQKPj4KZW5kb2JqCjMgMCBvYmoKPDwKL0Jhc2VGb250IC9IZWx2ZXRpY2EtQm9sZCAvRW5jb2RpbmcgL1dpbkFuc2lFbmNvZGluZyAvTmFtZSAvRjIgL1N1YnR5cGUgL1R5cGUxIC9UeXBlIC9Gb250Cj4+CmVuZG9iago0IDAgb2JqCjw8Ci9CYXNlRm9udCAvWmFwZkRpbmdiYXRzIC9OYW1lIC9GMyAvU3VidHlwZSAvVHlwZTEgL1R5cGUgL0ZvbnQKPj4KZW5kb2JqCjUgMCBvYmoKPDwKL0Jhc2VGb250IC9TeW1ib2wgL05hbWUgL0Y0IC9TdWJ0eXBlIC9UeXBlMSAvVHlwZSAvRm9udAo+PgplbmRvYmoKNiAwIG9iago8PAovQ29udGVudHMgMTEgMCBSIC9NZWRpYUJveCBbIDAgMCA1OTUuMjc1NiA4NDEuODg5OCBdIC9QYXJlbnQgMTAgMCBSIC9SZXNvdXJjZXMgPDwKL0ZvbnQgMSAwIFIgL1Byb2NTZXQgWyAvUERGIC9UZXh0IC9JbWFnZUIgL0ltYWdlQyAvSW1hZ2VJIF0KPj4gL1JvdGF0ZSAwIC9UcmFucyA8PAoKPj4gCiAgL1R5cGUgL1BhZ2UKPj4KZW5kb2JqCjcgMCBvYmoKPDwKL0NvbnRlbnRzIDEyIDAgUiAvTWVkaWFCb3ggWyAwIDAgNTk1LjI3NTYgODQxLjg4OTggXSAvUGFyZW50IDEwIDAgUiAvUmVzb3VyY2VzIDw8Ci9Gb250IDEgMCBSIC9Qcm9jU2V0IFsgL1BERiAvVGV4dCAvSW1hZ2VCIC9JbWFnZUMgL0ltYWdlSSBdCj4+IC9Sb3RhdGUgMCAvVHJhbnMgPDwKCj4+IAogIC9UeXBlIC9QYWdlCj4+CmVuZG9iago4IDAgb2JqCjw8Ci9QYWdlTW9kZSAvVXNlTm9uZSAvUGFnZXMgMTAgMCBSIC9UeXBlIC9DYXRhbG9nCj4+CmVuZG9iago5IDAgb2JqCjw8Ci9BdXRob3IgKFwoYW5vbnltb3VzXCkpIC9DcmVhdGlvbkRhdGUgKEQ6MjAyNjAzMTgxODA0MjMrMDAnMDAnKSAvQ3JlYXRvciAoXCh1bnNwZWNpZmllZFwpKSAvS2V5d29yZHMgKCkgL01vZERhdGUgKEQ6MjAyNjAzMTgxODA0MjMrMDAnMDAnKSAvUHJvZHVjZXIgKFJlcG9ydExhYiBQREYgTGlicmFyeSAtIFwob3BlbnNvdXJjZVwpKSAKICAvU3ViamVjdCAoXCh1bnNwZWNpZmllZFwpKSAvVGl0bGUgKFwoYW5vbnltb3VzXCkpIC9UcmFwcGVkIC9GYWxzZQo+PgplbmRvYmoKMTAgMCBvYmoKPDwKL0NvdW50IDIgL0tpZHMgWyA2IDAgUiA3IDAgUiBdIC9UeXBlIC9QYWdlcwo+PgplbmRvYmoKMTEgMCBvYmoKPDwKL0ZpbHRlciBbIC9BU0NJSTg1RGVjb2RlIC9GbGF0ZURlY29kZSBdIC9MZW5ndGggMTg1MAo+PgpzdHJlYW0KR2IhO2Q9YGA9VSY6VzY3Zk9kL1gyL05tKSxeO0ZvaWwibkZMRS5ubzorJVwjI3ReKSQtajQqT3MxU2s7XUlZTT8xNVQ0cmErPkY9cXNBaVohIjo6VDEmRGkiISFhMF5HL1NvTlFxVyhBYC5jPEszMVByQU4oPWUrLUA/cjBrUEVbMSZxbEwnKmdGIS5ETzY4WCZGS286IWdmI2wjUWxJaTlWNzloRUE6Wj5qK1A+WSJFaFBVK1ZDbTtpMVhiJC5PYFJpTi9BYjlmW2BRb1txN1RGUWxtT2UhaFFdQEBxbXNBOFdEKkgkSSllO1JvQWkpazQvOXJCKTpnXlg5Rlk9MVlkVGJcJW9PZXAwYCtsbzo1bSUtU15TKzo2NEFsX3JTZVlpVlYqNWEpTFMucTQkOExuZWljTTpvTTMwNFQnUixnQmJUSTI6ZyxjYlhfVjdvZUZ0Vi9ubktXZWQwSjVgIlRlR2syUEdecixfRTBjQ1ZlKU8uPylkUlU3TExBTGFuQVcwR0s4UEFST0M2VC1RRWlnTzpUXjYubz5nY2taSFonYz4yPUtzOyJTZ1BHXTpTXDIjQT8qXWMnUj8tVCxQQG1qQDkia1AuTmt1RVlecmBYL2IiT2lLUD07YFlDQ18/IyE7N21pcyZgR1lRZyxLNnVySkJpP1FxYyVdW2tqUyY+akkwcGxIKiJXITxqJl5SLkcvXSJiPEIudUFpWEplJm9ORj1UL2VSSyYmRWlJSiU4QzNMQzgtYHE3QmFhOCkjIT50bypvc2RPWyszLSNpVXBLWEZeTXU0UFcuRWIrbmhMZyksOUpkQSdEXjRTSGxiIT4sUyxZVmZPOCtKc1BQS1UhPWUuRTBlYCs/cyxwPjxAN09DN3Uia1BoLi1maS9TJmg7PjJGZzAlUHFTRTUxYm83Wi4tLW4hSGdgSWAtaF50MHFnK2wqQV5dMXBwPGBDKGZYTzg4V2gxMVdjRXIkMCE4LltmMUs9YFw0WS01Nz9sXzRWSUptN100NHRlLCo3XzpYclknQVd1VFA2bE1pPmpXWy0nVyU5OmR1W148PWFOTWw+RlhrYjcrUURNYSFRLltrVSFsNihHJ21gWlFhZFNBJVMyJVwiLDZeLHJqaUs/OSxnTXI1bzJwWGBAcTJucEZBZis1JWpSIi8uRGZqJyhycUomQD9qNnJmMUBoKUwlbl4hKidwckJoQS0qRF10ISUuSWBLJyYxLVNIazpUMW40Y3J0LVs/Uig4ZWoyOGkvbi0rMjNkTTE1bFFqYmExazFVTV5WX2JtI111P0JWXk43LDBILV9iW1piSWpraG9cc1JoOFRoWTpWNXRETD1LKm8xITE+VnAyV0hLZyldaCZrZFU2RUx1QFxlN2VART9wL19bKSglW0Y7U1c9YzpgN3JNQ2dwXWt1bCtZWiJwX2YlbUBWZ2g0XyZodVU6YnM3XVJHLjMpTV1LXCwxJFZLUWBWa2VfPihrQmFTMGJGMUMpVmxHRCg7UVc5YzY8aDpgajBoQzoxTFFdPURQT09VS2E6UUNHYyRjVD9PXWY4UFVVblttP1pOXW0zPi8+Z1NkPmAtcVFrMlw5cChiYiRuIWtwNExrVj9FVUdfOUtFVSZzQE5XTVBIJmFNPWQ3K1xhKTJXUlRKLDBfI01NNTlrWVM3ViE1PyooKGhrP0hvLDphIThOQl1lMi5KTl5YWFtcQ2RIbWElajM5JE4qY2YnUTBdMUZpTEI3TFdgR0pcNi8/SGxsPyRkMF06OCJnaEMpWzdEK1NAOkQrXldJWDU2YlE+JDUxPkJWNjEwZV1bZWZSMTFvV1s8dWhbOkdoZ09jUnM6YG9PKWRPKkE3JzpAPSpjJUd0RSxCW0YwdVI8UWxSbUltSixyZ1RqMlFxLC0kUFZXc2dBTkBYWDpaY1pnRl43Q0whWEVFTz8uUURdPmZwaU1ZM1dgJkFeWmZKO2haL3U4P0xyU1Y9MFBBUGkiXHFHTG9QIlBHM1hnUGtRUmVyb0wmNWBqOFksMlM8VG48PmFhR09Rai9YQnBkcjI+MzopLjplM2phJFA3Ujk8VSw4ZU1Sc005LldMWk9fRm04b2RpJGFRUEZVSy05WDgoXXE3ZUdjNlFdbiFeOixgIy1SWF0zKCRQPDZdSzYyRDNJQ2VvaTpVT1EuUSFaRkhhVitFMnRsWEJBcCU5Y0c+VjJoPSY/RTlLIlVmb1tlJldzTyRSa2lRQz4jaV5mMFVkR21sYUFmXkQ4K1pWNGQjRktBW1I4aiM9T1RCYlxsaVBGdWItJjFHIWZAJ2B0NDFsJTVockB0IStiQCRrQFNyOyEmaGhLYClkSDpRbFklZm1FOTBodUU2a042cU4pLSVkKVE2PloqTXI8cE5RKVpZITtKRTldMG1MSCg+NzxlInI0MlJGZj1oZHIvcyVaLmZdKWVKaSxRclVAZmctVGlLZWtbLDRrMmNLfj5lbmRzdHJlYW0KZW5kb2JqCjEyIDAgb2JqCjw8Ci9GaWx0ZXIgWyAvQVNDSUk4NURlY29kZSAvRmxhdGVEZWNvZGUgXSAvTGVuZ3RoIDIwNTEKPj4Kc3RyZWFtCkdiIi9pbFlrTjkmQVonRFk7Y3E9Uk0/LFo7WFxQSVpEPlswRyVvc0M/aSNKPUJVYXVMSD9xUC5jcCl0TGw9JTtNYnM4JChKUSJDaWMtdTMtXSYvVzRLbj1zV1c7VzpKITVGVFFtNGVkZT9vLylRJkolQC9FJj87RUdERiprVU9FSW8lX1UtcEo0LVkwaXJGdFlOaj8ua1l0bktjIzd1MEY2cj1waSteazRbazlKaFdnTDhtKSJIaS50Ji1iPmc0a0lZPU5VQUtYUi1Pa0U2Vz9nMzBHXHN1bTwhW2BJLVFwSm5VOScxJXVqbzlsOXBjW0IjaVdMSEFmQyRuWi9UK0xSTSQrL1tWLXEhMkNNazBPUm9gJF1HOS4xI2Zcb19aIUM+XTspPiorM3BhciddbE1QcT9pdVZZZU1mQ0B0KGVLclJlUjcjYktwTGc/Zzg5W29fZF49KmZyKS9HQTpnKnF1Qy9ZPStrKy0lYD89azEsYGE4LUthQ2FvajFjLlMpPFRfXV8uLGJDUScuNmElJWo7MmtaOz9ZVVdhQT9KJGM5XUs6Z0NmciI1OFw6UyloX2U8P2FndFxeVVU/Oy9ibCpCZCZkZ1VoOEQ/LFROV2M2S3EkajluPSRpYW1DYUcsMUAoWyo6cF9aUVMyQmdkOGFxdGAsNHVPQGthTVpBTCtFImhFREozU0BgW15LSVc8SS5jY290Py5eOmNhKTRKOlouNEtNXURwKGwjMDx1XFwmVHNRVzduPUw1ZEs+WihsQTYxZz05NnNFODl0OGZPR1BSblVVOiJEJztPJzssTTYnKVBIbzxLMzpTb2g0KidSL0Q8P0JAckhaMUliWzdGKC1rUTRYZzhNcjVjLTBac2QxJSRebXJ0VDY1SF1TZ1BcSFc5XTVzclFjXSxmbks5cS1oLCxuaFVOMDVjJ0dCLlhEKy9TZCJwMj4vVCYwaE1LVVZmJVZWXlYhW0NbYXQxcFhGMWxEXGNiME5FP1hqdEFJRCY5Ulohbi5XM2NWZE8mNG9rPms4QixacTpxPCFAYWY2UUVsaUVSSlQrMnE4P11dQ1ZvPnRxOWJBMVEoRm1AbHBPai06QCNoIjxHRDRzSHFVY1ZQXVFAJk47OWpdTTg1QlYvbFciXE4pc0xwak1OLydMTkpJLGI8YUAhU2tXXV8+YzBbTSokOiwvN2l0Y2wzUW8uN0tDImRpXjJhYzdkPDM4UVw4dCdkKVIoQDlwXmswdEklXVBBPmVlRUVhPj91Tk4tUiRxYVcmaF0qSDpLMjFPImM0YjxhRicoP0JpVUw+QVNJRUkpVSJtYSc7LkgjTGVzbWg+KzBBTW0waUlVZFBVUjgzNjo3YztvTUJPYDJYODRBUU44K1lQPl07V1E5LnA1V2RlImJMRzlSSztPWSpqT25nKCpfaiNeX2soO1g9dEBrbUwpRiI6UUxhSio6SG0/J0JOR045I11PLDsqQ2xEUnVUNWRNJEtnJzVkPVNWQCw+I28rUGAuXnAzXWxbTCE5UVswWzEhRyNrW1hHRjkmWmhhdVI3aDlFK1FqYGFtKkpdVWBxOFB1VGBnR2swKU82ITZwQ1FVVEg5aTtvOCV1MFk6YE08S0lSaFhKL25dYGM7IzNJWl9oJFhaPVZHLGw0V2MrK0JoK2w+Ulo+M1AlTUooT1FSNGBWN1prQlVpMixtIk08V3FHZV1yaUlrJ2xZUTdUJylnSm0kViNwV1ZYI05kKm5wNCVDb0txSmhbTkopY2hFPm1eXUVZX1BlPmFoXVdKaFFsIVsoQWVSZCNMY0wzNjxUJzBiTiMrTFtZZGJWaCU5dEpnPCptbFNCU0YoTSolQV0zVzxAY3JFZkMiWzc+ZFNoKWk6YGFbJElSZVJNOlpfZVpUc1EwbG87NDknSFxjbSdHLFIjZDJndCZgak01J0FhP1ojWjJPQUglKzE+Ri9XKlhkNT1IYSFFV04zSz5eYjdRK1JhX2gpKjVuWmY0WSkkRmA5Y1Y/Z1o0Wyc0W2djWXU6VkJaUENCPjlYN3BAYCtxYTZZam1NNmxcakElWW9zcG8vamtpPT1VSGRNMiskaEUkSkI1VkVTLUwzUnI4PFU1Kj9sVzFeNjhSN3NFWjkwZyNKPlpRYl9ZNGJbJShEaFhLZT4vU3BtUyRDNldpaE1hLipSVVtDLCsyKlNoKi1TUyhaRD5mals0PGdgYlMoRDBbJVFWW1kuLzVEYzwwInBuR2dbbDpXZDpTbmRuLlRwIzUrdDcmXyJQMismKEM4Oy0qMXBMKFI9M190OCQ8SmYzb2NKWCNiN2g9WCZHOC9aTWxeSE80PDplQmtecW9oLWRdUCdyPlVmYiZZUiQkM25BYkZUV1Bmcyc4NSdnX0o5LF9yZGQwVXBoa0tHcUx1JzcvX1FDaDZjVyZANzxoWypbUWosS08lXGNlNE8/QkdGZT0sL2hoP0BpQiYjIysySmEvS1EtWWFYTSRTVV89JW11U2FGNz9yWTsnZjhUUE44bjBXXjhMW3BubCZRTkE8ZElHczprOyI5PWNFU2InSiRwSmJxPW4haltvbyFbWExxa29vOXF0Uy5zSzRJVW1aRGErUVZiPF8jLlMwJFhOQEZdNjZhQ0RXN0EjKjhALERKKickT3E9U20sajBiaCUhZEBdLzB1ZlQvb2lpJWc5J18vPjA3bWhaMSItdGZwJklHKzA6M0hAX2o0UTFYOGAycGZfSCVucTN1Z34+ZW5kc3RyZWFtCmVuZG9iagp4cmVmCjAgMTMKMDAwMDAwMDAwMCA2NTUzNSBmIAowMDAwMDAwMDYxIDAwMDAwIG4gCjAwMDAwMDAxMjIgMDAwMDAgbiAKMDAwMDAwMDIyOSAwMDAwMCBuIAowMDAwMDAwMzQxIDAwMDAwIG4gCjAwMDAwMDA0MjQgMDAwMDAgbiAKMDAwMDAwMDUwMSAwMDAwMCBuIAowMDAwMDAwNzA2IDAwMDAwIG4gCjAwMDAwMDA5MTEgMDAwMDAgbiAKMDAwMDAwMDk4MCAwMDAwMCBuIAowMDAwMDAxMjYwIDAwMDAwIG4gCjAwMDAwMDEzMjYgMDAwMDAgbiAKMDAwMDAwMzI2OCAwMDAwMCBuIAp0cmFpbGVyCjw8Ci9JRCAKWzw4YTk5OTIxN2RmOWQxY2ZjZWZhZGM2ODdlYWQ4YjNhOD48OGE5OTkyMTdkZjlkMWNmY2VmYWRjNjg3ZWFkOGIzYTg+XQolIFJlcG9ydExhYiBnZW5lcmF0ZWQgUERGIGRvY3VtZW50IC0tIGRpZ2VzdCAob3BlbnNvdXJjZSkKCi9JbmZvIDkgMCBSCi9Sb290IDggMCBSCi9TaXplIDEzCj4+CnN0YXJ0eHJlZgo1NDExCiUlRU9GCg==">
+        </iframe>
+        <a href="data:application/pdf;base64,JVBERi0xLjQKJZOMi54gUmVwb3J0TGFiIEdlbmVyYXRlZCBQREYgZG9jdW1lbnQgKG9wZW5zb3VyY2UpCjEgMCBvYmoKPDwKL0YxIDIgMCBSIC9GMiAzIDAgUiAvRjMgNCAwIFIgL0Y0IDUgMCBSCj4+CmVuZG9iagoyIDAgb2JqCjw8Ci9CYXNlRm9udCAvSGVsdmV0aWNhIC9FbmNvZGluZyAvV2luQW5zaUVuY29kaW5nIC9OYW1lIC9GMSAvU3VidHlwZSAvVHlwZTEgL1R5cGUgL0ZvbnQKPj4KZW5kb2JqCjMgMCBvYmoKPDwKL0Jhc2VGb250IC9IZWx2ZXRpY2EtQm9sZCAvRW5jb2RpbmcgL1dpbkFuc2lFbmNvZGluZyAvTmFtZSAvRjIgL1N1YnR5cGUgL1R5cGUxIC9UeXBlIC9Gb250Cj4+CmVuZG9iago0IDAgb2JqCjw8Ci9CYXNlRm9udCAvWmFwZkRpbmdiYXRzIC9OYW1lIC9GMyAvU3VidHlwZSAvVHlwZTEgL1R5cGUgL0ZvbnQKPj4KZW5kb2JqCjUgMCBvYmoKPDwKL0Jhc2VGb250IC9TeW1ib2wgL05hbWUgL0Y0IC9TdWJ0eXBlIC9UeXBlMSAvVHlwZSAvRm9udAo+PgplbmRvYmoKNiAwIG9iago8PAovQ29udGVudHMgMTEgMCBSIC9NZWRpYUJveCBbIDAgMCA1OTUuMjc1NiA4NDEuODg5OCBdIC9QYXJlbnQgMTAgMCBSIC9SZXNvdXJjZXMgPDwKL0ZvbnQgMSAwIFIgL1Byb2NTZXQgWyAvUERGIC9UZXh0IC9JbWFnZUIgL0ltYWdlQyAvSW1hZ2VJIF0KPj4gL1JvdGF0ZSAwIC9UcmFucyA8PAoKPj4gCiAgL1R5cGUgL1BhZ2UKPj4KZW5kb2JqCjcgMCBvYmoKPDwKL0NvbnRlbnRzIDEyIDAgUiAvTWVkaWFCb3ggWyAwIDAgNTk1LjI3NTYgODQxLjg4OTggXSAvUGFyZW50IDEwIDAgUiAvUmVzb3VyY2VzIDw8Ci9Gb250IDEgMCBSIC9Qcm9jU2V0IFsgL1BERiAvVGV4dCAvSW1hZ2VCIC9JbWFnZUMgL0ltYWdlSSBdCj4+IC9Sb3RhdGUgMCAvVHJhbnMgPDwKCj4+IAogIC9UeXBlIC9QYWdlCj4+CmVuZG9iago4IDAgb2JqCjw8Ci9QYWdlTW9kZSAvVXNlTm9uZSAvUGFnZXMgMTAgMCBSIC9UeXBlIC9DYXRhbG9nCj4+CmVuZG9iago5IDAgb2JqCjw8Ci9BdXRob3IgKFwoYW5vbnltb3VzXCkpIC9DcmVhdGlvbkRhdGUgKEQ6MjAyNjAzMTgxODA0MjMrMDAnMDAnKSAvQ3JlYXRvciAoXCh1bnNwZWNpZmllZFwpKSAvS2V5d29yZHMgKCkgL01vZERhdGUgKEQ6MjAyNjAzMTgxODA0MjMrMDAnMDAnKSAvUHJvZHVjZXIgKFJlcG9ydExhYiBQREYgTGlicmFyeSAtIFwob3BlbnNvdXJjZVwpKSAKICAvU3ViamVjdCAoXCh1bnNwZWNpZmllZFwpKSAvVGl0bGUgKFwoYW5vbnltb3VzXCkpIC9UcmFwcGVkIC9GYWxzZQo+PgplbmRvYmoKMTAgMCBvYmoKPDwKL0NvdW50IDIgL0tpZHMgWyA2IDAgUiA3IDAgUiBdIC9UeXBlIC9QYWdlcwo+PgplbmRvYmoKMTEgMCBvYmoKPDwKL0ZpbHRlciBbIC9BU0NJSTg1RGVjb2RlIC9GbGF0ZURlY29kZSBdIC9MZW5ndGggMTg1MAo+PgpzdHJlYW0KR2IhO2Q9YGA9VSY6VzY3Zk9kL1gyL05tKSxeO0ZvaWwibkZMRS5ubzorJVwjI3ReKSQtajQqT3MxU2s7XUlZTT8xNVQ0cmErPkY9cXNBaVohIjo6VDEmRGkiISFhMF5HL1NvTlFxVyhBYC5jPEszMVByQU4oPWUrLUA/cjBrUEVbMSZxbEwnKmdGIS5ETzY4WCZGS286IWdmI2wjUWxJaTlWNzloRUE6Wj5qK1A+WSJFaFBVK1ZDbTtpMVhiJC5PYFJpTi9BYjlmW2BRb1txN1RGUWxtT2UhaFFdQEBxbXNBOFdEKkgkSSllO1JvQWkpazQvOXJCKTpnXlg5Rlk9MVlkVGJcJW9PZXAwYCtsbzo1bSUtU15TKzo2NEFsX3JTZVlpVlYqNWEpTFMucTQkOExuZWljTTpvTTMwNFQnUixnQmJUSTI6ZyxjYlhfVjdvZUZ0Vi9ubktXZWQwSjVgIlRlR2syUEdecixfRTBjQ1ZlKU8uPylkUlU3TExBTGFuQVcwR0s4UEFST0M2VC1RRWlnTzpUXjYubz5nY2taSFonYz4yPUtzOyJTZ1BHXTpTXDIjQT8qXWMnUj8tVCxQQG1qQDkia1AuTmt1RVlecmBYL2IiT2lLUD07YFlDQ18/IyE7N21pcyZgR1lRZyxLNnVySkJpP1FxYyVdW2tqUyY+akkwcGxIKiJXITxqJl5SLkcvXSJiPEIudUFpWEplJm9ORj1UL2VSSyYmRWlJSiU4QzNMQzgtYHE3QmFhOCkjIT50bypvc2RPWyszLSNpVXBLWEZeTXU0UFcuRWIrbmhMZyksOUpkQSdEXjRTSGxiIT4sUyxZVmZPOCtKc1BQS1UhPWUuRTBlYCs/cyxwPjxAN09DN3Uia1BoLi1maS9TJmg7PjJGZzAlUHFTRTUxYm83Wi4tLW4hSGdgSWAtaF50MHFnK2wqQV5dMXBwPGBDKGZYTzg4V2gxMVdjRXIkMCE4LltmMUs9YFw0WS01Nz9sXzRWSUptN100NHRlLCo3XzpYclknQVd1VFA2bE1pPmpXWy0nVyU5OmR1W148PWFOTWw+RlhrYjcrUURNYSFRLltrVSFsNihHJ21gWlFhZFNBJVMyJVwiLDZeLHJqaUs/OSxnTXI1bzJwWGBAcTJucEZBZis1JWpSIi8uRGZqJyhycUomQD9qNnJmMUBoKUwlbl4hKidwckJoQS0qRF10ISUuSWBLJyYxLVNIazpUMW40Y3J0LVs/Uig4ZWoyOGkvbi0rMjNkTTE1bFFqYmExazFVTV5WX2JtI111P0JWXk43LDBILV9iW1piSWpraG9cc1JoOFRoWTpWNXRETD1LKm8xITE+VnAyV0hLZyldaCZrZFU2RUx1QFxlN2VART9wL19bKSglW0Y7U1c9YzpgN3JNQ2dwXWt1bCtZWiJwX2YlbUBWZ2g0XyZodVU6YnM3XVJHLjMpTV1LXCwxJFZLUWBWa2VfPihrQmFTMGJGMUMpVmxHRCg7UVc5YzY8aDpgajBoQzoxTFFdPURQT09VS2E6UUNHYyRjVD9PXWY4UFVVblttP1pOXW0zPi8+Z1NkPmAtcVFrMlw5cChiYiRuIWtwNExrVj9FVUdfOUtFVSZzQE5XTVBIJmFNPWQ3K1xhKTJXUlRKLDBfI01NNTlrWVM3ViE1PyooKGhrP0hvLDphIThOQl1lMi5KTl5YWFtcQ2RIbWElajM5JE4qY2YnUTBdMUZpTEI3TFdgR0pcNi8/SGxsPyRkMF06OCJnaEMpWzdEK1NAOkQrXldJWDU2YlE+JDUxPkJWNjEwZV1bZWZSMTFvV1s8dWhbOkdoZ09jUnM6YG9PKWRPKkE3JzpAPSpjJUd0RSxCW0YwdVI8UWxSbUltSixyZ1RqMlFxLC0kUFZXc2dBTkBYWDpaY1pnRl43Q0whWEVFTz8uUURdPmZwaU1ZM1dgJkFeWmZKO2haL3U4P0xyU1Y9MFBBUGkiXHFHTG9QIlBHM1hnUGtRUmVyb0wmNWBqOFksMlM8VG48PmFhR09Rai9YQnBkcjI+MzopLjplM2phJFA3Ujk8VSw4ZU1Sc005LldMWk9fRm04b2RpJGFRUEZVSy05WDgoXXE3ZUdjNlFdbiFeOixgIy1SWF0zKCRQPDZdSzYyRDNJQ2VvaTpVT1EuUSFaRkhhVitFMnRsWEJBcCU5Y0c+VjJoPSY/RTlLIlVmb1tlJldzTyRSa2lRQz4jaV5mMFVkR21sYUFmXkQ4K1pWNGQjRktBW1I4aiM9T1RCYlxsaVBGdWItJjFHIWZAJ2B0NDFsJTVockB0IStiQCRrQFNyOyEmaGhLYClkSDpRbFklZm1FOTBodUU2a042cU4pLSVkKVE2PloqTXI8cE5RKVpZITtKRTldMG1MSCg+NzxlInI0MlJGZj1oZHIvcyVaLmZdKWVKaSxRclVAZmctVGlLZWtbLDRrMmNLfj5lbmRzdHJlYW0KZW5kb2JqCjEyIDAgb2JqCjw8Ci9GaWx0ZXIgWyAvQVNDSUk4NURlY29kZSAvRmxhdGVEZWNvZGUgXSAvTGVuZ3RoIDIwNTEKPj4Kc3RyZWFtCkdiIi9pbFlrTjkmQVonRFk7Y3E9Uk0/LFo7WFxQSVpEPlswRyVvc0M/aSNKPUJVYXVMSD9xUC5jcCl0TGw9JTtNYnM4JChKUSJDaWMtdTMtXSYvVzRLbj1zV1c7VzpKITVGVFFtNGVkZT9vLylRJkolQC9FJj87RUdERiprVU9FSW8lX1UtcEo0LVkwaXJGdFlOaj8ua1l0bktjIzd1MEY2cj1waSteazRbazlKaFdnTDhtKSJIaS50Ji1iPmc0a0lZPU5VQUtYUi1Pa0U2Vz9nMzBHXHN1bTwhW2BJLVFwSm5VOScxJXVqbzlsOXBjW0IjaVdMSEFmQyRuWi9UK0xSTSQrL1tWLXEhMkNNazBPUm9gJF1HOS4xI2Zcb19aIUM+XTspPiorM3BhciddbE1QcT9pdVZZZU1mQ0B0KGVLclJlUjcjYktwTGc/Zzg5W29fZF49KmZyKS9HQTpnKnF1Qy9ZPStrKy0lYD89azEsYGE4LUthQ2FvajFjLlMpPFRfXV8uLGJDUScuNmElJWo7MmtaOz9ZVVdhQT9KJGM5XUs6Z0NmciI1OFw6UyloX2U8P2FndFxeVVU/Oy9ibCpCZCZkZ1VoOEQ/LFROV2M2S3EkajluPSRpYW1DYUcsMUAoWyo6cF9aUVMyQmdkOGFxdGAsNHVPQGthTVpBTCtFImhFREozU0BgW15LSVc8SS5jY290Py5eOmNhKTRKOlouNEtNXURwKGwjMDx1XFwmVHNRVzduPUw1ZEs+WihsQTYxZz05NnNFODl0OGZPR1BSblVVOiJEJztPJzssTTYnKVBIbzxLMzpTb2g0KidSL0Q8P0JAckhaMUliWzdGKC1rUTRYZzhNcjVjLTBac2QxJSRebXJ0VDY1SF1TZ1BcSFc5XTVzclFjXSxmbks5cS1oLCxuaFVOMDVjJ0dCLlhEKy9TZCJwMj4vVCYwaE1LVVZmJVZWXlYhW0NbYXQxcFhGMWxEXGNiME5FP1hqdEFJRCY5Ulohbi5XM2NWZE8mNG9rPms4QixacTpxPCFAYWY2UUVsaUVSSlQrMnE4P11dQ1ZvPnRxOWJBMVEoRm1AbHBPai06QCNoIjxHRDRzSHFVY1ZQXVFAJk47OWpdTTg1QlYvbFciXE4pc0xwak1OLydMTkpJLGI8YUAhU2tXXV8+YzBbTSokOiwvN2l0Y2wzUW8uN0tDImRpXjJhYzdkPDM4UVw4dCdkKVIoQDlwXmswdEklXVBBPmVlRUVhPj91Tk4tUiRxYVcmaF0qSDpLMjFPImM0YjxhRicoP0JpVUw+QVNJRUkpVSJtYSc7LkgjTGVzbWg+KzBBTW0waUlVZFBVUjgzNjo3YztvTUJPYDJYODRBUU44K1lQPl07V1E5LnA1V2RlImJMRzlSSztPWSpqT25nKCpfaiNeX2soO1g9dEBrbUwpRiI6UUxhSio6SG0/J0JOR045I11PLDsqQ2xEUnVUNWRNJEtnJzVkPVNWQCw+I28rUGAuXnAzXWxbTCE5UVswWzEhRyNrW1hHRjkmWmhhdVI3aDlFK1FqYGFtKkpdVWBxOFB1VGBnR2swKU82ITZwQ1FVVEg5aTtvOCV1MFk6YE08S0lSaFhKL25dYGM7IzNJWl9oJFhaPVZHLGw0V2MrK0JoK2w+Ulo+M1AlTUooT1FSNGBWN1prQlVpMixtIk08V3FHZV1yaUlrJ2xZUTdUJylnSm0kViNwV1ZYI05kKm5wNCVDb0txSmhbTkopY2hFPm1eXUVZX1BlPmFoXVdKaFFsIVsoQWVSZCNMY0wzNjxUJzBiTiMrTFtZZGJWaCU5dEpnPCptbFNCU0YoTSolQV0zVzxAY3JFZkMiWzc+ZFNoKWk6YGFbJElSZVJNOlpfZVpUc1EwbG87NDknSFxjbSdHLFIjZDJndCZgak01J0FhP1ojWjJPQUglKzE+Ri9XKlhkNT1IYSFFV04zSz5eYjdRK1JhX2gpKjVuWmY0WSkkRmA5Y1Y/Z1o0Wyc0W2djWXU6VkJaUENCPjlYN3BAYCtxYTZZam1NNmxcakElWW9zcG8vamtpPT1VSGRNMiskaEUkSkI1VkVTLUwzUnI4PFU1Kj9sVzFeNjhSN3NFWjkwZyNKPlpRYl9ZNGJbJShEaFhLZT4vU3BtUyRDNldpaE1hLipSVVtDLCsyKlNoKi1TUyhaRD5mals0PGdgYlMoRDBbJVFWW1kuLzVEYzwwInBuR2dbbDpXZDpTbmRuLlRwIzUrdDcmXyJQMismKEM4Oy0qMXBMKFI9M190OCQ8SmYzb2NKWCNiN2g9WCZHOC9aTWxeSE80PDplQmtecW9oLWRdUCdyPlVmYiZZUiQkM25BYkZUV1Bmcyc4NSdnX0o5LF9yZGQwVXBoa0tHcUx1JzcvX1FDaDZjVyZANzxoWypbUWosS08lXGNlNE8/QkdGZT0sL2hoP0BpQiYjIysySmEvS1EtWWFYTSRTVV89JW11U2FGNz9yWTsnZjhUUE44bjBXXjhMW3BubCZRTkE8ZElHczprOyI5PWNFU2InSiRwSmJxPW4haltvbyFbWExxa29vOXF0Uy5zSzRJVW1aRGErUVZiPF8jLlMwJFhOQEZdNjZhQ0RXN0EjKjhALERKKickT3E9U20sajBiaCUhZEBdLzB1ZlQvb2lpJWc5J18vPjA3bWhaMSItdGZwJklHKzA6M0hAX2o0UTFYOGAycGZfSCVucTN1Z34+ZW5kc3RyZWFtCmVuZG9iagp4cmVmCjAgMTMKMDAwMDAwMDAwMCA2NTUzNSBmIAowMDAwMDAwMDYxIDAwMDAwIG4gCjAwMDAwMDAxMjIgMDAwMDAgbiAKMDAwMDAwMDIyOSAwMDAwMCBuIAowMDAwMDAwMzQxIDAwMDAwIG4gCjAwMDAwMDA0MjQgMDAwMDAgbiAKMDAwMDAwMDUwMSAwMDAwMCBuIAowMDAwMDAwNzA2IDAwMDAwIG4gCjAwMDAwMDA5MTEgMDAwMDAgbiAKMDAwMDAwMDk4MCAwMDAwMCBuIAowMDAwMDAxMjYwIDAwMDAwIG4gCjAwMDAwMDEzMjYgMDAwMDAgbiAKMDAwMDAwMzI2OCAwMDAwMCBuIAp0cmFpbGVyCjw8Ci9JRCAKWzw4YTk5OTIxN2RmOWQxY2ZjZWZhZGM2ODdlYWQ4YjNhOD48OGE5OTkyMTdkZjlkMWNmY2VmYWRjNjg3ZWFkOGIzYTg+XQolIFJlcG9ydExhYiBnZW5lcmF0ZWQgUERGIGRvY3VtZW50IC0tIGRpZ2VzdCAob3BlbnNvdXJjZSkKCi9JbmZvIDkgMCBSCi9Sb290IDggMCBSCi9TaXplIDEzCj4+CnN0YXJ0eHJlZgo1NDExCiUlRU9GCg==" 
+           download="Pig_Butchering_Scam_Handout.pdf" 
+           class="btn-download">
+          ⬇ Download Handout (PDF)
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- SANCTIONS -->
+  <div class="tab-content" id="tab-sanctions">
+    <div class="typology-header">
+      <div class="typology-icon">🚫</div>
+      <div>
+        <div class="typology-title">Sanctions Evasion</div>
+        <div class="typology-subtitle">International Sanctions Compliance</div>
+        <div class="typology-overview">Sanctions evasion involves circumventing trade, financial, or travel restrictions imposed by governments or international bodies such as OFAC, OFSI, the UN, and the EU. Evasion methods have grown increasingly sophisticated, with state and non-state actors exploiting gaps in global financial systems. Sanctions programmes targeting Russia, Iran, North Korea, and Myanmar have driven a surge in evasion typologies across correspondent banking, trade finance, and virtual assets.</div>
+      </div>
+    </div>
+    <div class="cards-row">
+      <div class="info-card">
+        <div class="info-card-header"><div class="info-card-icon icon-red">⚠️</div><div class="info-card-title">Key Red Flags</div></div>
+        <ul class="red-flags-list">
+          <li>Transactions routed through third-country intermediaries to obscure origin</li>
+          <li>Use of front companies or complex ownership structures in non-sanctioned jurisdictions</li>
+          <li>Payments referencing vague descriptions such as "consulting fees" or "general goods"</li>
+          <li>Shipping documents with inconsistent or altered vessel information</li>
+          <li>Customers or counterparties with ties to sanctioned individuals or entities</li>
+          <li>IP addresses or login activity originating from sanctioned territories</li>
+          <li>Use of crypto wallets linked to sanctioned exchanges</li>
+        </ul>
+      </div>
+      <div class="info-card">
+        <div class="info-card-header"><div class="info-card-icon icon-blue">↗️</div><div class="info-card-title">Latest Trends (2024–2025)</div></div>
+        <ul class="trends-list">
+          <li>Russia-Ukraine conflict driving complex Russian sanctions evasion through Central Asia and UAE</li>
+          <li>Increased use of cryptocurrency to bypass SWIFT-based sanctions screening</li>
+          <li>OFAC expanding SDN list designations at record pace</li>
+          <li>Proliferation financing via dual-use goods becoming a key focus area</li>
+          <li>Regulators pushing for real-time sanctions screening capabilities</li>
+          <li>Growing use of vessel-tracking and satellite data in investigations</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="action-bar">
+      <a href="#" class="action-btn btn-coming" onclick="return false;">
+        📄 Download Handout <span class="coming-tag">Coming Soon</span>
+      </a>
+      <a href="#" class="action-btn btn-coming" onclick="return false;">
+        🎬 Watch Video <span class="coming-tag">Coming Soon</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- MARKET ABUSE -->
+  <div class="tab-content" id="tab-market">
+    <div class="typology-header">
+      <div class="typology-icon">📈</div>
+      <div>
+        <div class="typology-title">Market Abuse</div>
+        <div class="typology-subtitle">Insider Dealing · Market Manipulation · Front Running</div>
+        <div class="typology-overview">Market abuse encompasses a range of conduct that undermines the integrity of financial markets, including insider dealing, market manipulation, and unlawful disclosure of inside information. Regulated under MAR (EU) and the Financial Services and Markets Act (UK), market abuse erodes investor confidence and distorts price discovery. As electronic trading volumes grow, surveillance capabilities must evolve to detect increasingly sophisticated manipulation techniques across equities, fixed income, FX, and commodities markets.</div>
+      </div>
+    </div>
+    <div class="cards-row">
+      <div class="info-card">
+        <div class="info-card-header"><div class="info-card-icon icon-red">⚠️</div><div class="info-card-title">Key Red Flags</div></div>
+        <ul class="red-flags-list">
+          <li>Unusual trading activity ahead of material announcements (earnings, M&A)</li>
+          <li>Large position changes by insiders close to restricted periods</li>
+          <li>Layering or spoofing — placing and rapidly cancelling orders to move prices</li>
+          <li>Coordinated trading between related parties to inflate volumes (wash trading)</li>
+          <li>Employees accessing MNPI outside their role scope</li>
+          <li>Communications referencing material non-public information</li>
+          <li>Front-running client orders for personal or proprietary gain</li>
+        </ul>
+      </div>
+      <div class="info-card">
+        <div class="info-card-header"><div class="info-card-icon icon-blue">↗️</div><div class="info-card-title">Latest Trends (2024–2025)</div></div>
+        <ul class="trends-list">
+          <li>AI-driven surveillance tools replacing legacy rule-based alert systems</li>
+          <li>Crypto market manipulation emerging as a key regulatory focus area</li>
+          <li>Cross-asset manipulation increasingly common (equities + derivatives)</li>
+          <li>Regulators using NLP to analyse communications for MNPI leakage</li>
+          <li>Rise of social media-driven pump-and-dump schemes targeting retail investors</li>
+          <li>FCA and SEC increasing personal liability enforcement for senior managers</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="action-bar">
+      <a href="#" class="action-btn btn-coming" onclick="return false;">
+        📄 Download Handout <span class="coming-tag">Coming Soon</span>
+      </a>
+      <a href="#" class="action-btn btn-coming" onclick="return false;">
+        🎬 Watch Video <span class="coming-tag">Coming Soon</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- FRAUD -->
+  <div class="tab-content" id="tab-fraud">
+    <div class="typology-header">
+      <div class="typology-icon">🕵️</div>
+      <div>
+        <div class="typology-title">Fraud</div>
+        <div class="typology-subtitle">Financial Fraud · Payment Fraud · Identity Fraud</div>
+        <div class="typology-overview">Financial fraud involves the intentional deception of individuals or institutions for financial gain. It encompasses a wide spectrum — from payment fraud and identity theft to investment scams, procurement fraud, and authorised push payment (APP) fraud. Fraud losses continue to escalate globally, with UK Finance reporting over £1.1 billion in fraud losses in 2023. The digitalisation of financial services has created new attack surfaces, demanding increasingly sophisticated detection and prevention capabilities.</div>
+      </div>
+    </div>
+    <div class="cards-row">
+      <div class="info-card">
+        <div class="info-card-header"><div class="info-card-icon icon-red">⚠️</div><div class="info-card-title">Key Red Flags</div></div>
+        <ul class="red-flags-list">
+          <li>Unusual payment instructions — especially changes to supplier bank details</li>
+          <li>Urgency or pressure tactics in payment requests</li>
+          <li>Duplicate invoices or payments to newly registered vendors</li>
+          <li>Login activity from unusual locations or devices</li>
+          <li>Account takeover indicators — failed login attempts, password resets</li>
+          <li>Employees living beyond apparent means</li>
+          <li>Reluctance to take leave or share access — classic fraud concealment behaviour</li>
+        </ul>
+      </div>
+      <div class="info-card">
+        <div class="info-card-header"><div class="info-card-icon icon-blue">↗️</div><div class="info-card-title">Latest Trends (2024–2025)</div></div>
+        <ul class="trends-list">
+          <li>AI-generated deepfakes being used in CEO fraud and impersonation scams</li>
+          <li>APP fraud overtaking card fraud as the dominant fraud typology in the UK</li>
+          <li>Rise of investment fraud via social media platforms and fake trading apps</li>
+          <li>Mandatory reimbursement rules (PSR UK) reshaping bank liability for APP fraud</li>
+          <li>Mule account networks becoming more sophisticated and harder to detect</li>
+          <li>Real-time payment rails increasing fraud velocity and reducing recovery windows</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="action-bar">
+      <a href="#" class="action-btn btn-coming" onclick="return false;">
+        📄 Download Handout <span class="coming-tag">Coming Soon</span>
+      </a>
+      <a href="#" class="action-btn btn-coming" onclick="return false;">
+        🎬 Watch Video <span class="coming-tag">Coming Soon</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- INSIDER THREAT -->
+  <div class="tab-content" id="tab-insider">
+    <div class="typology-header">
+      <div class="typology-icon">🏢</div>
+      <div>
+        <div class="typology-title">Insider Threat</div>
+        <div class="typology-subtitle">Employee Misconduct · Data Theft · Sabotage</div>
+        <div class="typology-overview">Insider threats arise when current or former employees, contractors, or business partners misuse their authorised access to harm an organisation — whether through data theft, fraud, sabotage, or espionage. Unlike external threats, insiders have legitimate access, making detection particularly challenging. Insider threat programmes must balance security objectives with employee privacy, requiring strong governance frameworks, behavioural analytics, and a culture of ethical reporting.</div>
+      </div>
+    </div>
+    <div class="cards-row">
+      <div class="info-card">
+        <div class="info-card-header"><div class="info-card-icon icon-red">⚠️</div><div class="info-card-title">Key Red Flags</div></div>
+        <ul class="red-flags-list">
+          <li>Accessing systems or data outside normal working hours or role scope</li>
+          <li>Downloading or exfiltrating large volumes of data before resignation</li>
+          <li>Repeated policy violations or disciplinary issues</li>
+          <li>Unexplained wealth or sudden lifestyle changes</li>
+          <li>Disgruntlement following demotion, redundancy notice, or performance review</li>
+          <li>Bypassing security controls or requesting excessive access privileges</li>
+          <li>Sharing sensitive information with unauthorised third parties</li>
+        </ul>
+      </div>
+      <div class="info-card">
+        <div class="info-card-header"><div class="info-card-icon icon-blue">↗️</div><div class="info-card-title">Latest Trends (2024–2025)</div></div>
+        <ul class="trends-list">
+          <li>Remote and hybrid working models expanding the insider threat attack surface</li>
+          <li>User and Entity Behaviour Analytics (UEBA) becoming standard in large institutions</li>
+          <li>Nation-state actors recruiting insiders within financial institutions</li>
+          <li>Increased focus on third-party and contractor insider risk</li>
+          <li>Psychological profiling integrated into insider risk programmes</li>
+          <li>Regulators requiring documented insider threat frameworks as part of governance reviews</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="action-bar">
+      <a href="#" class="action-btn btn-coming" onclick="return false;">
+        📄 Download Handout <span class="coming-tag">Coming Soon</span>
+      </a>
+      <a href="#" class="action-btn btn-coming" onclick="return false;">
+        🎬 Watch Video <span class="coming-tag">Coming Soon</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- BRIBERY -->
+  <div class="tab-content" id="tab-bribery">
+    <div class="typology-header">
+      <div class="typology-icon">🤝</div>
+      <div>
+        <div class="typology-title">Bribery & Corruption</div>
+        <div class="typology-subtitle">Anti-Bribery · FCPA · UK Bribery Act</div>
+        <div class="typology-overview">Bribery involves offering, giving, receiving, or soliciting something of value to influence the actions of an official or other person in a position of authority. Corruption undermines institutional integrity, distorts markets, and damages trust. Key legislative frameworks include the US Foreign Corrupt Practices Act (FCPA) and the UK Bribery Act 2010, which impose strict liability on organisations failing to prevent bribery. Third-party and supply chain risk represents one of the most significant exposure areas for global organisations.</div>
+      </div>
+    </div>
+    <div class="cards-row">
+      <div class="info-card">
+        <div class="info-card-header"><div class="info-card-icon icon-red">⚠️</div><div class="info-card-title">Key Red Flags</div></div>
+        <ul class="red-flags-list">
+          <li>Unusually high commissions or fees paid to third-party agents</li>
+          <li>Payments to vendors in jurisdictions unrelated to services rendered</li>
+          <li>Contracts awarded without proper tender processes</li>
+          <li>Gifts, hospitality, or entertainment exceeding policy thresholds</li>
+          <li>Facilitation payments recorded as legitimate business expenses</li>
+          <li>Third parties with connections to government officials or PEPs</li>
+          <li>Requests to make payments in cash or to personal accounts</li>
+        </ul>
+      </div>
+      <div class="info-card">
+        <div class="info-card-header"><div class="info-card-icon icon-blue">↗️</div><div class="info-card-title">Latest Trends (2024–2025)</div></div>
+        <ul class="trends-list">
+          <li>DOJ and SFO increasing corporate prosecution activity post-COVID backlog</li>
+          <li>ESG frameworks driving enhanced anti-corruption due diligence requirements</li>
+          <li>Supply chain transparency laws (e.g. UK Modern Slavery Act) expanding ABC obligations</li>
+          <li>Growing focus on state-owned enterprises in high-risk markets</li>
+          <li>AI-powered third-party screening replacing manual due diligence workflows</li>
+          <li>Deferred Prosecution Agreements (DPAs) becoming the preferred resolution tool</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="action-bar">
+      <a href="#" class="action-btn btn-coming" onclick="return false;">
+        📄 Download Handout <span class="coming-tag">Coming Soon</span>
+      </a>
+      <a href="#" class="action-btn btn-coming" onclick="return false;">
+        🎬 Watch Video <span class="coming-tag">Coming Soon</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- WHISTLEBLOWING -->
+  <div class="tab-content" id="tab-whistle">
+    <div class="typology-header">
+      <div class="typology-icon">🔔</div>
+      <div>
+        <div class="typology-title">Whistleblowing Investigations</div>
+        <div class="typology-subtitle">Protected Disclosures · Speak Up · Ethical Reporting</div>
+        <div class="typology-overview">Whistleblowing — or making a protected disclosure — is the act of reporting suspected wrongdoing within an organisation to an internal or external authority. Effective whistleblowing frameworks are a cornerstone of strong corporate governance, enabling early detection of financial crime, misconduct, and regulatory breaches. The EU Whistleblower Protection Directive (2019/1937) and the UK Public Interest Disclosure Act (PIDA) provide legal protections for reporters. Organisations must foster a speak-up culture where retaliation is actively prevented and disclosures are handled with rigour and confidentiality.</div>
+      </div>
+    </div>
+    <div class="cards-row">
+      <div class="info-card">
+        <div class="info-card-header"><div class="info-card-icon icon-red">⚠️</div><div class="info-card-title">Key Red Flags</div></div>
+        <ul class="red-flags-list">
+          <li>Reports of retaliation against employees who have raised concerns</li>
+          <li>Low volume of speak-up reports — may indicate fear of reporting</li>
+          <li>Repeated concerns raised about the same individual or team</li>
+          <li>Management overriding controls or discouraging escalation</li>
+          <li>Anonymous reports referencing specific financial irregularities</li>
+          <li>Disclosures involving senior leadership or those in positions of trust</li>
+          <li>Pattern of concerns dismissed without adequate investigation</li>
+        </ul>
+      </div>
+      <div class="info-card">
+        <div class="info-card-header"><div class="info-card-icon icon-blue">↗️</div><div class="info-card-title">Latest Trends (2024–2025)</div></div>
+        <ul class="trends-list">
+          <li>EU Whistleblower Directive driving harmonisation of reporting standards across member states</li>
+          <li>SEC whistleblower awards programme paying record bounties — $600M+ in FY2023</li>
+          <li>Digital speak-up platforms replacing legacy hotlines for anonymised reporting</li>
+          <li>Psychological safety assessments integrated into speak-up culture reviews</li>
+          <li>Increased regulator scrutiny of organisations with low disclosure volumes</li>
+          <li>AI-powered triage tools helping case managers prioritise and route disclosures efficiently</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="action-bar">
+      <a href="#" class="action-btn btn-coming" onclick="return false;">
+        📄 Download Handout <span class="coming-tag">Coming Soon</span>
+      </a>
+      <a href="#" class="action-btn btn-coming" onclick="return false;">
+        🎬 Watch Video <span class="coming-tag">Coming Soon</span>
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <p>© 2025 Sunil Kumar Singh &nbsp;·&nbsp; <span>Financial Crime Insights</span> &nbsp;·&nbsp; <a href="index.html" style="color:var(--teal);text-decoration:none;">← Back to Portfolio</a></p>
+</footer>
+
+<script>
+  function toggleDropdown(id) {
+    const content = document.getElementById('dropdown-' + id);
+    const arrow = document.getElementById('arrow-' + id);
+    content.classList.toggle('open');
+    arrow.classList.toggle('open');
+  }
+
+  function showTab(id) {
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + id).classList.add('active');
+    event.currentTarget.classList.add('active');
+  }
+</script>
+
+</body>
+</html>
