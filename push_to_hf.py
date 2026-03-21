@@ -1,36 +1,31 @@
 import requests
 import base64
 import os
-import json
 from datetime import datetime
 
 HF_TOKEN = os.environ.get("HF_TOKEN")
 REPO_ID = "FinTuneAI/portfolio"
 FILE_PATH = "highlights.json"
 
-# Read the generated highlights.json
 with open("highlights.json", "rb") as f:
     content = f.read()
 
 encoded = base64.b64encode(content).decode("utf-8")
 
-# Push to HuggingFace Space
+# Use the correct HuggingFace upload API
+url = f"https://huggingface.co/api/spaces/{REPO_ID}/upload/main"
+
 response = requests.post(
-    f"https://huggingface.co/api/spaces/{REPO_ID}/commit/main",
+    url,
     headers={
         "Authorization": f"Bearer {HF_TOKEN}",
-        "Content-Type": "application/json"
     },
-    json={
-        "commit_message": f"Auto-update highlights {datetime.utcnow().strftime('%Y-%m-%d')}",
-        "operations": [
-            {
-                "key": FILE_PATH,
-                "type": "file",
-                "content": encoded,
-                "encoding": "base64"
-            }
-        ]
+    files={
+        "file": (FILE_PATH, content, "application/json")
+    },
+    data={
+        "path_in_repo": FILE_PATH,
+        "commit_message": f"Auto-update highlights {datetime.utcnow().strftime('%Y-%m-%d')}"
     }
 )
 
