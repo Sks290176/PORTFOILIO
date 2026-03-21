@@ -1,0 +1,30 @@
+name: Daily Highlights Update
+
+on:
+  schedule:
+    - cron: '30 0 * * *'  # Runs at 6:00 AM IST (00:30 UTC) every day
+  workflow_dispatch:       # Also allows manual trigger from GitHub
+
+jobs:
+  update-highlights:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install requests feedparser
+
+      - name: Generate highlights
+        run: python generate_highlights.py
+
+      - name: Push to HuggingFace
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python push_to_hf.py
