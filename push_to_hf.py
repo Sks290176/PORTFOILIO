@@ -1,40 +1,22 @@
-import requests
-import base64
 import os
+import json
 from datetime import datetime
 
 HF_TOKEN = os.environ.get("HF_TOKEN")
-REPO_ID = "FinTuneAI/portfolio"
-FILE_PATH = "highlights.json"
 
-with open("highlights.json", "rb") as f:
-    content = f.read()
+# Install huggingface_hub
+os.system("pip install huggingface_hub -q")
 
-encoded = base64.b64encode(content).decode("utf-8")
+from huggingface_hub import HfApi
 
-# Correct HuggingFace Hub API endpoint
-response = requests.post(
-    f"https://huggingface.co/api/repos/FinTuneAI/portfolio/commit/main",
-    headers={
-        "Authorization": f"Bearer {HF_TOKEN}",
-        "Content-Type": "application/json"
-    },
-    json={
-        "summary": f"Auto-update highlights {datetime.utcnow().strftime('%Y-%m-%d')}",
-        "files": [
-            {
-                "path": FILE_PATH,
-                "content": encoded,
-                "encoding": "base64"
-            }
-        ]
-    },
-    params={"repoType": "space"}
+api = HfApi(token=HF_TOKEN)
+
+api.upload_file(
+    path_or_fileobj="highlights.json",
+    path_in_repo="highlights.json",
+    repo_id="FinTuneAI/portfolio",
+    repo_type="space",
+    commit_message=f"Auto-update highlights {datetime.utcnow().strftime('%Y-%m-%d')}"
 )
 
-if response.status_code in [200, 201]:
-    print(f"✅ Successfully pushed highlights.json to HuggingFace!")
-    print(response.json())
-else:
-    print(f"❌ Failed: {response.status_code} — {response.text}")
-    exit(1)
+print("✅ Successfully pushed highlights.json to HuggingFace!")
