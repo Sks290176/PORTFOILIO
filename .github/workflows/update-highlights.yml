@@ -19,7 +19,7 @@ jobs:
           python-version: '3.11'
 
       - name: Install dependencies
-        run: pip install requests feedparser
+        run: pip install requests feedparser huggingface_hub
 
       - name: Generate highlights
         run: python generate_highlights.py
