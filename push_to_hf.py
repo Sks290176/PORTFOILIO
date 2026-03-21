@@ -12,25 +12,29 @@ with open("highlights.json", "rb") as f:
 
 encoded = base64.b64encode(content).decode("utf-8")
 
-# Use the correct HuggingFace upload API
-url = f"https://huggingface.co/api/spaces/{REPO_ID}/upload/main"
-
+# Correct HuggingFace Hub API endpoint
 response = requests.post(
-    url,
+    f"https://huggingface.co/api/repos/FinTuneAI/portfolio/commit/main",
     headers={
         "Authorization": f"Bearer {HF_TOKEN}",
+        "Content-Type": "application/json"
     },
-    files={
-        "file": (FILE_PATH, content, "application/json")
+    json={
+        "summary": f"Auto-update highlights {datetime.utcnow().strftime('%Y-%m-%d')}",
+        "files": [
+            {
+                "path": FILE_PATH,
+                "content": encoded,
+                "encoding": "base64"
+            }
+        ]
     },
-    data={
-        "path_in_repo": FILE_PATH,
-        "commit_message": f"Auto-update highlights {datetime.utcnow().strftime('%Y-%m-%d')}"
-    }
+    params={"repoType": "space"}
 )
 
 if response.status_code in [200, 201]:
     print(f"✅ Successfully pushed highlights.json to HuggingFace!")
+    print(response.json())
 else:
     print(f"❌ Failed: {response.status_code} — {response.text}")
     exit(1)
