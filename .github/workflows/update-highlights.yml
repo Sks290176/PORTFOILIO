@@ -2,13 +2,12 @@ name: Daily Highlights Update
 
 on:
   schedule:
-    - cron: '30 0 * * *'  # Runs at 6:00 AM IST (00:30 UTC) every day
-  workflow_dispatch:       # Also allows manual trigger from GitHub
+    - cron: '30 0 * * *'  # 6:00 AM IST (00:30 UTC)
+  workflow_dispatch:
 
 jobs:
   update-highlights:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
@@ -22,6 +21,8 @@ jobs:
         run: pip install requests feedparser huggingface_hub
 
       - name: Generate highlights
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: python generate_highlights.py
 
       - name: Push to HuggingFace
