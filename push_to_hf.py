@@ -14,7 +14,7 @@ api = HfApi(token=HF_TOKEN)
 api.upload_file(
     path_or_fileobj="highlights.json",
     path_in_repo="highlights.json",
-    repo_id="FinTuneAI/portfolio",
+    repo_id="SunilKSingh/portfolio",
     repo_type="space",
     commit_message=f"Auto-update highlights {datetime.utcnow().strftime('%Y-%m-%d')}"
 )
